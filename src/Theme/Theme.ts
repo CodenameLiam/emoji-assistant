@@ -1,5 +1,5 @@
 import { DefaultTheme, Theme as NavTheme } from '@react-navigation/native';
-import { Colours } from './Colours';
+import { Colours } from './Variables';
 
 export const Theme: NavTheme = {
     ...DefaultTheme,

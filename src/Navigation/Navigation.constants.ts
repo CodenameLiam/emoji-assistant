@@ -1,3 +1,5 @@
+import { StackNavigationProp } from '@react-navigation/stack';
+
 export type AppScreens = {
     Home: undefined;
     Help: undefined;
@@ -5,3 +7,5 @@ export type AppScreens = {
     Camera: undefined;
     Info: undefined;
 };
+
+export type HomeNavProps = StackNavigationProp<AppScreens, 'Home'>;

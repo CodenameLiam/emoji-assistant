@@ -1,11 +1,24 @@
 import React, { FC } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import HomeTitle from '../../Components/HomeTitle/HomeTitle';
+import PrimaryButton from '../../Components/PrimaryButton/PrimaryButton';
+import SecondaryButton from '../../Components/SecondaryButton/SecondaryButton';
+import { HomeNavProps } from '../../Navigation/Navigation.constants';
 
-const Home: FC = () => {
+interface HomeProps {
+    navigation: HomeNavProps;
+}
+
+const Home: FC<HomeProps> = ({ navigation }) => {
+    const handleHelp = (): void => navigation.navigate('Upload');
+
     return (
         <SafeAreaView>
-            <Text>Home</Text>
+            <HomeTitle />
+            <PrimaryButton emoji="📷" text="scan" colour="red" />
+            <PrimaryButton emoji="📁" text="upload" colour="blue" />
+            <SecondaryButton text="help" onPress={handleHelp} />
         </SafeAreaView>
     );
 };
