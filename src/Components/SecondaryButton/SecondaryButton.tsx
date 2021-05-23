@@ -7,8 +7,8 @@ interface SecondaryButtonProps extends TouchableOpacityProps {
     text: string;
 }
 
-const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onPress }) => (
-    <SecondaryButtonContainer onPress={onPress}>
+const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onPress, ...rest }) => (
+    <SecondaryButtonContainer onPress={onPress} {...rest}>
         <PrimaryButtonText>{text}</PrimaryButtonText>
     </SecondaryButtonContainer>
 );

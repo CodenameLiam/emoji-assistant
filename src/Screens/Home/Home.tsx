@@ -13,10 +13,12 @@ interface HomeProps {
 const Home: FC<HomeProps> = ({ navigation }) => {
     const handleHelp = (): void => navigation.navigate('Upload');
 
+    const handleScan = (): void => navigation.navigate('Scan');
+
     return (
         <SafeAreaView>
             <HomeTitle />
-            <PrimaryButton emoji="📷" text="scan" colour="red" />
+            <PrimaryButton emoji="📷" text="scan" colour="red" onPress={handleScan} />
             <PrimaryButton emoji="📁" text="upload" colour="blue" />
             <SecondaryButton text="help" onPress={handleHelp} />
         </SafeAreaView>

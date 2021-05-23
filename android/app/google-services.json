@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "537826953849",
+    "project_id": "emoji-assistant",
+    "storage_bucket": "emoji-assistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537826953849:android:0d26d3f501d3892c0962a8",
+        "android_client_info": {
+          "package_name": "com.emojiassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "537826953849-u7kcj3v2boerpuh9rl9a4g05gf0ev1ko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6jQ1ZzkrV73PuJrQ-1oWf5_1_Nkb95gc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "537826953849-u7kcj3v2boerpuh9rl9a4g05gf0ev1ko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
