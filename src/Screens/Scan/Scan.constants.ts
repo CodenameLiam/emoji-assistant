@@ -28,6 +28,11 @@ export const emojiMap: IEmojiMap = {
     sushi: '🍣',
     pretzel: '🥨',
     fruit: '🍓',
+    pancake: '🥞',
+    waffle: '🧇',
+    juice: '🧃',
+    egg: '🍳',
+    coffee: '☕',
 };
 
 export const menu2: FirebaseMLTypes.MLDocumentText = {

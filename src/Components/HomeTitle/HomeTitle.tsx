@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import { HomeTitleContainer, HomeTitleAccent, HomeTitleText } from './HomeTitle.styles';
+import * as Styles from './HomeTitle.styles';
 
 const HomeTitle: FC = () => (
-    <HomeTitleContainer>
-        <HomeTitleAccent>emoji </HomeTitleAccent>
-        <HomeTitleText>assistant</HomeTitleText>
-    </HomeTitleContainer>
+    <Styles.Container>
+        <Styles.Accent>emoji </Styles.Accent>
+        <Styles.Text>assistant</Styles.Text>
+    </Styles.Container>
 );
 
 export default HomeTitle;

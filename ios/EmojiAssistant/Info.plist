@@ -35,8 +35,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to emojify text! 😄</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need to access your photos so we can emojify them! 🖼️</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need to access your photos so we can emojify them! 🖼️</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Black.ttf</string>
@@ -64,24 +70,11 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
+	<array/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	
-	<key>NSCameraUsageDescription</key>
-	<string>The camera is used to emojify text! 😄</string>
-
-	<!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll -->
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>We need to access your photos so we can emojify them! 🖼️</string>
-
-	<!-- Include this only if you are planning to use the camera roll -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need to access your photos so we can emojify them! 🖼️</string>
 </dict>
 </plist>

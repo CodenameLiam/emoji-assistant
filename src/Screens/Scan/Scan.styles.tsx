@@ -4,7 +4,7 @@ import { Theme } from '../../Theme/Theme';
 
 const CAPTURE_BUTTON_DIMENSIONS = '80';
 const BACK_BUTTON_DIMENSIONS = '50';
-const EMOJI_BUTTON_DIMENSIONS = '40';
+const EMOJI_BUTTON_DIMENSIONS = '50';
 
 // Container
 export const ScanContainer = styled.SafeAreaView`
@@ -32,7 +32,7 @@ export const ScanInfoButton = css`
 export const CaptureContainer = styled.View`
     position: absolute;
     width: 100%;
-    bottom: 0;
+    bottom: 50px;
     height: 120px;
     align-items: center;
 `;
@@ -56,8 +56,8 @@ export const CameraPreview = styled(RNCamera)`
 
 export const EmojiContainer = styled.TouchableOpacity`
     position: absolute;
-    height: ${EMOJI_BUTTON_DIMENSIONS}px;
-    /* width: 80px; */
     border-radius: 10px;
     background-color: #fff;
 `;
+/* height: ${EMOJI_BUTTON_DIMENSIONS}px; */
+/* width: 80px; */
