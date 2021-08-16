@@ -1,5 +1,5 @@
 // bounding box [left, top, right, bottom]
-export const mock1 = {
+export const mockScan = {
     blocks: [
         // {
         //     boundingBox: [1287, 706, 1813, 929],

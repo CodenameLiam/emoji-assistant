@@ -16,7 +16,7 @@ import { ScanNavProps } from '../../Navigation/Navigation.constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryButton from '../../Components/SecondaryButton/SecondaryButton';
 import Svg, { Polygon } from 'react-native-svg';
-import { mock1 } from './Scan.mock1';
+import { mockScan } from '../../Mock/Scan.mock';
 
 interface ScanProps {
     navigation: ScanNavProps;
@@ -27,7 +27,7 @@ interface DimensionProps {
     height: number;
 }
 
-interface ParsedResponse {
+export interface ParsedResponse {
     text: string;
     emojis: string[];
     boundingBox: {
@@ -50,17 +50,17 @@ interface ParsedResponse {
     };
 }
 
-const interpolateHeight = (height: number, imgHeight: number): number => {
-    return (height / imgHeight) * Dimensions.get('screen').height;
+const interpolateHeight = (height: number, imgHeight: number, layoutHeight: number): number => {
+    return (height / imgHeight) * layoutHeight;
 };
 
-const interpolateWidth = (width: number, imgWidth: number): number => {
-    return (width / imgWidth) * Dimensions.get('screen').width;
+const interpolateWidth = (width: number, imgWidth: number, layoutWidth: number): number => {
+    return (width / imgWidth) * layoutWidth;
 };
 
-const EMOJI_HEIGHT = 50;
+export const EMOJI_HEIGHT = 50;
 const EMOJI_WIDTH = 50;
-const EMOJI_GAP = 10;
+export const EMOJI_GAP = 10;
 
 const processMidOut = <T,>(array: T[], callback: (element: T) => void): void => {
     const length = array.length;
@@ -78,10 +78,12 @@ const processMidOut = <T,>(array: T[], callback: (element: T) => void): void => 
     }
 };
 
-const getParsedResponse = (
+export const getParsedResponse = (
     mlResponse: FirebaseMLTypes.MLDocumentText,
     imgHeight: number,
     imgWidth: number,
+    layoutHeight: number,
+    layoutWidth: number,
 ): ParsedResponse[] => {
     const parsedResponse = mlResponse.blocks
         .map(block => {
@@ -97,19 +99,17 @@ const getParsedResponse = (
         .filter(block => block.emojis.length > 1)
         .map((values, index) => {
             const [left, top, right, bottom] = values.boundingBox;
-            const topInterpolated = interpolateHeight(top, imgHeight);
-            const bottomInterpolated = interpolateHeight(bottom, imgHeight);
-            const leftInterpolated = interpolateWidth(left, imgWidth);
-            const rightInterpolated = interpolateWidth(right, imgWidth);
+            const topInterpolated = interpolateHeight(top, imgHeight, layoutHeight);
+            const bottomInterpolated = interpolateHeight(bottom, imgHeight, layoutHeight);
+            const leftInterpolated = interpolateWidth(left, imgWidth, layoutWidth);
+            const rightInterpolated = interpolateWidth(right, imgWidth, layoutWidth);
 
             const boundingBox = {
                 top: topInterpolated,
                 left: leftInterpolated,
-                bottom: topInterpolated + EMOJI_HEIGHT,
+                bottom: bottomInterpolated,
                 right: rightInterpolated,
                 mid: topInterpolated + EMOJI_HEIGHT / 2,
-                // height: bottomInterpolated - topInterpolated,
-                // width: rightInterpolated - leftInterpolated,
             };
 
             const emojiBox = {
@@ -122,30 +122,10 @@ const getParsedResponse = (
                 mid: topInterpolated + (bottomInterpolated - topInterpolated) / 2,
             };
 
-            // const emojiBound = {
-            //     id: index
-            //     top: topInterpolated + (bottomInterpolated - topInterpolated) / 2,
-            //     left: boundingBox.left + (rightInterpolated - leftInterpolated) / 2,
-            // }
-
-            // const emojiBox = {
-            //     top: boundingBox.top,
-            //     left: boundingBox.left,
-            //     height: boundingBox.height + EMOJI_HEIGHT,
-            // };
-
             return {
                 emojis: values.emojis,
-                boundingBox: boundingBox,
+                boundingBox,
                 emojiBox,
-                // emojiBox: {
-                //     ...boundingBox,
-                //     id: index,
-                //     overlap: false,
-                //     left: boundingBox.left + (boundingBox.right - boundingBox.left) / 2,
-                //     // height: boundingBox.bottom - boundingBox.top,
-                //     // width: values.emojis.length * EMOJI_WIDTH,
-                // },
                 text: values.text,
             };
         });
@@ -162,6 +142,7 @@ const getParsedResponse = (
                     targRec.top < compRec.bottom &&
                     compRec.top < targRec.bottom
                 ) {
+                    targRec.overlap = true;
                     // Target rectangle comes before the comparison rectangle
                     // Move target rectangle up
                     if (targRec.id < compRec.id) {
@@ -176,76 +157,37 @@ const getParsedResponse = (
                     }
                 }
             }
-            // console.log(orderElem.emojiBox.id);
         });
-        // if (response.emojiBox.id < parsedResponse.length / 2) {
-        //     console.log('Below is less');
-        // }
-        // console.log(response.emojiBox.id);
-
-        // response.emojiBox.overlap = true;
     });
+    processMidOut(parsedResponse, midElement => {
+        parsedResponse.forEach(orderElem => {
+            const targRec = midElement.emojiBox;
+            const compRec = orderElem.emojiBox;
 
-    // let i = Math.ceil(parsedResponse.length / 2);
-    // let j = i - 1;
-
-    // while (j >= 0) {
-    //     j--;
-    //     if (i < parsedResponse.length) i++;
-    // }
-
-    // for (let i = 0; i < Math.ceil(parsedResponse.length / 2); i++) {
-    //     const upper = Math.ceil(parsedResponse.length / 2) + i;
-    //     const lower = Math.ceil(parsedResponse.length / 2) - i;
-
-    //     console.log(lower - 1);
-
-    //     const rec1 = parsedResponse[upper].emojiBox;
-    //     const rec2 = parsedResponse[upper - 1].emojiBox;
-
-    //     if (rec1.left < rec2.right && rec2.left < rec1.right && rec1.top < rec2.bottom && rec2.top < rec1.bottom) {
-    //         // rec1.top = rec2.bottom + EMOJI_GAP;
-    //         // rec1.bottom = rec1.top + EMOJI_HEIGHT;
-    //         // rec1.height = rec1.bottom - rec1.top;
-    //         // rec1.overlap = true;
-
-    //         rec1.top = rec2.bottom + EMOJI_GAP;
-    //         rec1.bottom = rec1.top + EMOJI_HEIGHT;
-    //         rec1.height = rec1.bottom - rec1.top;
-    //         rec1.overlap = true;
-    //     }
-
-    //     const rec3 = parsedResponse[lower + 1].emojiBox;
-    //     const rec4 = parsedResponse[lower].emojiBox;
-
-    //     if (rec3.left < rec4.right && rec4.left < rec3.right && rec3.top < rec4.bottom && rec4.top < rec3.bottom) {
-    //         rec4.bottom = rec3.top - EMOJI_GAP;
-    //         rec4.top = rec4.bottom - EMOJI_HEIGHT;
-    //         rec4.height = rec4.bottom - rec4.top;
-    //         rec4.overlap = true;
-    //     }
-
-    // if(parsedResponse[upper].emojiBox.top < parsedResponse[upper - 1].emojiBox.)
-
-    // console.log(upper);
-
-    // console.log(upper);
-    // console.log(lower);
-
-    // if (i !== 0) {
-    //     if (
-    //         upper < parsedResponse.length &&
-    //         parsedResponse[upper].emojiBox.top - 45 < parsedResponse[upper - 1].emojiBox.bottom
-    //     ) {
-    //         parsedResponse[upper].emojiBox.top = parsedResponse[upper - 1].emojiBox.bottom + 30;
-    //         parsedResponse[upper].emojiBox.bottom = parsedResponse[upper - 1].emojiBox.bottom + 45;
-    //     }
-    //     if (lower >= 0 && parsedResponse[lower].emojiBox.bottom + 45 > parsedResponse[lower + 1].emojiBox.top) {
-    //         parsedResponse[lower].emojiBox.bottom = parsedResponse[lower + 1].emojiBox.top - 30;
-    //         parsedResponse[lower].emojiBox.top = parsedResponse[lower + 1].emojiBox.top - 45;
-    //     }
-    // }
-    // }
+            if (targRec.id !== compRec.id) {
+                if (
+                    targRec.left < compRec.right &&
+                    compRec.left < targRec.right &&
+                    targRec.top < compRec.bottom &&
+                    compRec.top < targRec.bottom
+                ) {
+                    targRec.overlap = true;
+                    // Target rectangle comes before the comparison rectangle
+                    // Move target rectangle up
+                    if (targRec.id < compRec.id) {
+                        targRec.bottom = compRec.top - EMOJI_GAP;
+                        targRec.top = targRec.bottom - EMOJI_HEIGHT;
+                    }
+                    // Target rectangle comes after the comparison rectangle
+                    // Move target rectangle down
+                    else {
+                        targRec.top = compRec.bottom + EMOJI_GAP;
+                        targRec.bottom = targRec.top + EMOJI_HEIGHT;
+                    }
+                }
+            }
+        });
+    });
 
     return parsedResponse;
 };
@@ -272,18 +214,21 @@ const Scan: FC<ScanProps> = ({ navigation }) => {
             setCapture(true);
             setLoading(true);
 
-            // Debug
-            // setParsedResponse(getParsedResponse(menu2, data.height, data.width));
-
             // Actual
             // const mlResponse = await ml().cloudDocumentTextRecognizerProcessImage(data.uri);
             // console.log(JSON.stringify(mlResponse));
 
-            // console.log((406 / data.height) * Dimensions.get('screen').height);
-            // console.log(Dimensions.get('screen').height);
-            // console.log(data.width);
-            const mlResponse: any = mock1;
-            setParsedResponse(getParsedResponse(mlResponse, data.height, data.width));
+            // Debug
+            const mlResponse: any = mockScan;
+            setParsedResponse(
+                getParsedResponse(
+                    mlResponse,
+                    data.height,
+                    data.width,
+                    Dimensions.get('screen').height,
+                    Dimensions.get('screen').width,
+                ),
+            );
 
             setLoading(false);
         }
@@ -333,7 +278,7 @@ const Scan: FC<ScanProps> = ({ navigation }) => {
                                 />
                             </Svg>
 
-                            <View
+                            {/* <View
                                 style={{
                                     position: 'absolute',
                                     top: response.boundingBox.top,
@@ -343,7 +288,7 @@ const Scan: FC<ScanProps> = ({ navigation }) => {
                                     borderStyle: 'solid',
                                     borderWidth: 2,
                                 }}
-                            />
+                            /> */}
 
                             <EmojiContainer
                                 onPress={() => navigation.navigate('Explore', { text: response.text })}
@@ -354,10 +299,10 @@ const Scan: FC<ScanProps> = ({ navigation }) => {
                                     height: EMOJI_HEIGHT,
                                     width: response.emojis.length * (EMOJI_HEIGHT - 4),
                                     display: showEmojis ? 'flex' : 'none',
-                                    backgroundColor: response.emojiBox.overlap ? 'red' : 'white',
+                                    // backgroundColor: response.emojiBox.overlap ? 'red' : 'white',
                                 }}
                             >
-                                <Text style={{ position: 'absolute' }}>{response.emojiBox.id}</Text>
+                                {/* <Text style={{ position: 'absolute' }}>{response.emojiBox.id}</Text> */}
                                 <Text style={{ fontSize: 40 }}>{response.emojis}</Text>
                             </EmojiContainer>
                         </Fragment>
