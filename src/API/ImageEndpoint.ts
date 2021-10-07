@@ -12,7 +12,7 @@ interface ImageResults {
     link: string;
 }
 
-interface ImageResponse {
+export interface ImageResponse {
     images_results: ImageResults[];
 }
 
